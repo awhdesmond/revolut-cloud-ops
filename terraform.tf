@@ -9,6 +9,6 @@ terraform {
 }
 
 provider "aws" {
-	profile = "terraform"
-	region = var.region
+  profile = "terraform"
+  region  = var.region
 }

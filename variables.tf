@@ -6,14 +6,14 @@ variable "region" {
 
 variable "eks_name" {
   description = "EKS name"
-  type = string
-  default = "eks"
+  type        = string
+  default     = "eks"
 }
 
 variable "k8s_version" {
   description = "EKS K8S version"
-  type = string
-  default = "1.30"
+  type        = string
+  default     = "1.30"
 }
 
 variable "cluster_addons" {

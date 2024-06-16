@@ -4,27 +4,27 @@ locals {
 
 # EKS will use this role to create resources on our behalf
 resource "aws_iam_role" "eks_cluster" {
-	name = "${var.eks_name}-eks-cluster"
+  name = "${var.eks_name}-eks-cluster"
 
-	assume_role_policy = jsonencode({
-		Version = "2012-10-17",
-		Statement = {
-			Action = "sts.AssumeRole",
-			Effect = "Allow",
-			Sid = "",
-			Principal = {
-				Service = "eks.amazonaws.com"
-			}
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = {
+      Action = "sts.AssumeRole",
+      Effect = "Allow",
+      Sid    = "",
+      Principal = {
+        Service = "eks.amazonaws.com"
+      }
     }
-	})
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "amazon_eks_cluster_policy" {
-	# ARN of the policy you want to apply
-	policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+  # ARN of the policy you want to apply
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 
-	# the role of the policy should apply to
-	role = aws_iam_role.eks_cluster.name
+  # the role of the policy should apply to
+  role = aws_iam_role.eks_cluster.name
 }
 
 # KMS Key
@@ -37,21 +37,21 @@ resource "aws_kms_key" "eks_encryption" {
 
 
 resource "aws_eks_cluster" "eks" {
-	name = var.eks_name
-	version = var.k8s_version
-	role_arn = aws_iam_role.eks_cluster.arn
+  name     = var.eks_name
+  version  = var.k8s_version
+  role_arn = aws_iam_role.eks_cluster.arn
 
-	vpc_config {
-		endpoint_private_access = false
-		endpoint_public_access = true
+  vpc_config {
+    endpoint_private_access = false
+    endpoint_public_access  = true
 
-		subnet_ids             = concat(module.vpc.private_subnets, module.vpc.public_subnets)
-    	security_group_ids     = [aws_security_group.eks_cluster_sg.id]
-	}
+    subnet_ids         = concat(module.vpc.private_subnets, module.vpc.public_subnets)
+    security_group_ids = [aws_security_group.eks_cluster_sg.id]
+  }
 
-	depends_on = [
-		aws_iam_role_policy_attachment.amazon_eks_cluster_policy
-	]
+  depends_on = [
+    aws_iam_role_policy_attachment.amazon_eks_cluster_policy
+  ]
 }
 
 // OIDC Provider
@@ -92,23 +92,23 @@ resource "aws_eks_addon" "main" {
 # AWS LBC IAM
 
 resource "aws_iam_role" "aws_lbc" {
-  name               = "${aws_eks_cluster.eks.name}-aws-lbc"
+  name = "${aws_eks_cluster.eks.name}-aws-lbc"
   assume_role_policy = jsonencode({
-		Version = "2012-10-17",
-		Statement = {
-			Effect = "Allow",
-			Action = "sts.AssumeRoleWithWebIdentity",
+    Version = "2012-10-17",
+    Statement = {
+      Effect = "Allow",
+      Action = "sts.AssumeRoleWithWebIdentity",
       Principals = {
         Federated = aws_iam_openid_connect_provider.eks.arn
       },
-			Condition = {
+      Condition = {
         StringEquals = {
-          "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:aud": "sts.amazonaws.com",
-          "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub": "system:serviceaccount:platform-aws:aws-load-balancer-controller"
+          "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:aud" : "sts.amazonaws.com",
+          "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub" : "system:serviceaccount:platform-aws:aws-load-balancer-controller"
         }
       }
     }
-	})
+  })
 }
 
 resource "aws_iam_policy" "aws_lbc" {

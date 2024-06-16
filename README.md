@@ -2,10 +2,11 @@
 
 IaC repository for terraform configuration cloud resources.
 
-
 ## Getting Started
 ```bash
 aws configure --profile terraform
+terraform apply
+
 aws eks update-kubeconfig --region eu-west-1 --name eks
 ```
 

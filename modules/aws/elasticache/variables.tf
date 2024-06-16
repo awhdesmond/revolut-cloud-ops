@@ -4,60 +4,50 @@ variable "vpc_id" {
   description = "ID of the VPC"
 }
 
-variable "db_name" {
+variable "cluster_name" {
   type        = string
   nullable    = false
   description = "Name of the DB"
 }
 
-variable "db_engine" {
-  type        = string
-  nullable    = false
-  description = "DB Engine"
-}
 
-variable "db_version" {
+variable "cluster_version" {
   type        = string
-  nullable    = false
+  default     = "7.0"
   description = "DB Engine Version"
 }
 
-variable "db_family" {
-  type        = string
-  nullable    = false
-  description = "DB Family"
+variable "num_cache_nodes" {
+  type        = int
+  default     = 1
+  description = "number of cache nodes"
 }
 
-variable "db_instance_class" {
+variable "cluster_parameter_group_name" {
   type        = string
-  default     = "db.t3.small"
-  description = "DB instance class"
+  default     = "default.redis7.0"
+  description = "parameter group name"
 }
 
-variable "db_storage_type" {
+variable "cluster_instance_class" {
   type        = string
-  default     = "gp3"
-  description = "DB storage type"
+  default     = "cache.m4.large"
+  description = "node type"
 }
 
-variable "db_subnets_id" {
+variable "cluster_subnets_id" {
   type        = list(string)
   nullable    = false
   description = "ids of subnets to deploy the database"
 }
 
-variable "db_storage" {
-  type = int
-  nullable    = false
-  description = "size of the database"
-}
 
-variable "db_security_group_ingress_cidr_blocks" {
+variable "cluster_security_group_ingress_cidr_blocks" {
   type        = list(string)
   description = "database security group ingress cidr blocks"
   validation {
     condition = alltrue([
-      for o in var.db_security_group_ingress_cidr_blocks : can(cidrnetmask(o))
+      for o in var.cluster_security_group_ingress_cidr_blocks : can(cidrnetmask(o))
     ])
     error_message = "Must be valid IPv4 CIDR block"
   }

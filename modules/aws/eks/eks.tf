@@ -26,62 +26,6 @@ resource "aws_iam_role_policy_attachment" "amazon_eks_cluster_policy" {
   role = aws_iam_role.eks_cluster.name
 }
 
-# KMS Key
-
-data "aws_iam_policy_document" "kms_key_policy" {
-  statement {
-    sid = "Key Administrators"
-    actions = [
-      "kms:Create*",
-      "kms:Describe*",
-      "kms:Enable*",
-      "kms:List*",
-      "kms:Put*",
-      "kms:Update*",
-      "kms:Revoke*",
-      "kms:Disable*",
-      "kms:Get*",
-      "kms:Delete*",
-      "kms:ScheduleKeyDeletion",
-      "kms:CancelKeyDeletion",
-      "kms:Decrypt",
-      "kms:DescribeKey",
-      "kms:Encrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:TagResource"
-    ]
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
-        data.aws_caller_identity.current.arn
-      ]
-    }
-    resources = ["*"]
-  }
-
-  statement {
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey"
-    ]
-    principals {
-      type        = "Service"
-      identifiers = ["eks.amazonaws.com"]
-    }
-    resources = ["*"]
-  }
-}
-
-resource "aws_kms_key" "eks_encryption" {
-  description         = "KMS key for EKS cluster encryption"
-  policy              = data.aws_iam_policy_document.kms_key_policy.json
-  enable_key_rotation = true
-}
 
 resource "aws_eks_cluster" "eks" {
   name     = var.eks_name
@@ -166,7 +110,3 @@ resource "aws_iam_role_policy_attachment" "aws_lbc" {
   policy_arn = aws_iam_policy.aws_lbc.arn
   role       = aws_iam_role.aws_lbc.name
 }
-
-# AWS SECRET MANAGEMENT IAM
-
-

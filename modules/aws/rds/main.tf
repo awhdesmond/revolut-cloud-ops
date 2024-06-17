@@ -47,9 +47,7 @@ resource "random_password" "master" {
 }
 
 resource "aws_secretsmanager_secret" "password" {
-  name = "${var.db_name}-password"
-  # name = "rds/${var.db_name}-password"
-
+  name = "rds-${var.db_name}-password"
 }
 
 resource "aws_secretsmanager_secret_version" "password" {

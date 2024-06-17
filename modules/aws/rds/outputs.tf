@@ -12,3 +12,13 @@ output "rds_username" {
   description = "RDS instance root username"
   value       = aws_db_instance.main.username
 }
+
+output "rds_password_secret_arn" {
+  description = "RDS password secret arn"
+  value = aws_secretsmanager_secret.password.arn
+}
+
+output "rds_password_secret_name" {
+  description = "RDS password secret name"
+  value = aws_secretsmanager_secret.password.name
+}

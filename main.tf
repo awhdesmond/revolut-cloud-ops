@@ -1,10 +1,7 @@
-resource "aws_ecr_repository" "revolut_user_service" {
-  name                 = "revolut-user-service"
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
+module "ecr" {
+  source = "./modules/aws/ecr"
+  repo_name = "revolut-user-service"
+  lifecycle_policy_file = "./conf/ecr/lifecycle.json"
 }
 
 module "vpc" {
@@ -47,14 +44,26 @@ module "elasticache" {
   default_tags = { env = "prod" }
 }
 
+locals {
+  eks_name = "eks"
+}
+
 module "eks" {
   source = "./modules/aws/eks"
   vpc_id = module.vpc.vpc_id
-  eks_name = "eks"
+  eks_name = local.eks_name
   eks_version = "1.30"
   private_subnet_ids = module.vpc.private_subnets
   public_subnet_ids = module.vpc.public_subnets
   default_tags = { env = "prod" }
 }
 
-
+module "revolut_user_service_role" {
+  source = "./modules/aws/eks-sa-role"
+  eks_name = "eks"
+  eks_namespace = "revolut"
+  eks_service_account = "api"
+  eks_oidc_provider_arn = module.eks.eks_oidc_provider_arn
+  eks_oidc_provider_url = module.eks.eks_oidc_provider_url
+  secrets_arns = [ module.rds.rds_password_secret_arn, module.elasticache.cluster_password_secret_arn ]
+}

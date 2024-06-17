@@ -150,7 +150,7 @@ resource "aws_iam_role" "aws_lbc" {
       Condition = {
         StringEquals = {
           "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:aud" : "sts.amazonaws.com",
-          "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub" : "system:serviceaccount:platform-aws:aws-load-balancer-controller"
+          "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub" : "system:serviceaccount:platform-cloud:aws-load-balancer-controller"
         }
       }
     }
@@ -158,7 +158,7 @@ resource "aws_iam_role" "aws_lbc" {
 }
 
 resource "aws_iam_policy" "aws_lbc" {
-  policy = file("./iam/AWSLoadBalancerController.json")
+  policy = file("./conf/iam/AWSLoadBalancerController.json")
   name   = "AWSLoadBalancerController"
 }
 

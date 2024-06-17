@@ -27,6 +27,8 @@ resource "random_password" "password" {
 
 resource "aws_secretsmanager_secret" "password" {
   name = "${var.cluster_name}-elasticache-password"
+  # name = "elasticache/${var.cluster_name}-password"
+
 }
 
 resource "aws_secretsmanager_secret_version" "password" {

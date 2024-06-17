@@ -11,8 +11,8 @@ resource "aws_security_group" "rds_sg" {
   vpc_id      = var.vpc_id
 
   ingress {
-    to_port     = 3306
-    from_port   = 3306
+    to_port     = 5432
+    from_port   = 5432
     protocol    = "tcp"
     cidr_blocks = var.db_security_group_ingress_cidr_blocks
   }
@@ -48,6 +48,8 @@ resource "random_password" "master" {
 
 resource "aws_secretsmanager_secret" "password" {
   name = "${var.db_name}-password"
+  # name = "rds/${var.db_name}-password"
+
 }
 
 resource "aws_secretsmanager_secret_version" "password" {

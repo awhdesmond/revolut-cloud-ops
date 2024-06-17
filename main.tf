@@ -47,4 +47,14 @@ module "elasticache" {
   default_tags = { env = "prod" }
 }
 
+module "eks" {
+  source = "./modules/aws/eks"
+  vpc_id = module.vpc.vpc_id
+  eks_name = "eks"
+  eks_version = "1.30"
+  private_subnet_ids = module.vpc.private_subnets
+  public_subnet_ids = module.vpc.public_subnets
+  default_tags = { env = "prod" }
+}
+
 

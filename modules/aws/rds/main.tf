@@ -95,8 +95,8 @@ resource "aws_db_instance" "replica" {
   backup_retention_period = 7
   storage_encrypted       = true
   kms_key_id              = aws_kms_key.rds_kms_key.arn
-
   parameter_group_name = aws_db_parameter_group.main.name
+  skip_final_snapshot  = true
 
   tags = merge(var.default_tags, {
     Name = var.db_name

@@ -27,7 +27,7 @@ module "rds" {
   db_family                             = "postgres16"
   db_instance_class                     = "db.t3.medium"
   db_subnets_id                         = module.vpc.private_subnets
-  db_storage                            = 50
+  db_storage                            = 25
   db_security_group_ingress_cidr_blocks = module.vpc.private_subnets_cidr_blocks
 
   default_tags = { env = "prod" }

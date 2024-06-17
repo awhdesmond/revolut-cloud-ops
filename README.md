@@ -1,6 +1,11 @@
 # Revolut Cloud Ops
 
-IaC repository for terraform configuration cloud resources.
+IaC repository for terraform configuration of cloud resources.
+
+## Pre-requisites
+
+1. Install `aws` CLI by following the instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+2. Create an AWS account for `terraform` with `AdministratorAccess` permission
 
 ## Getting Started
 ```bash
@@ -12,5 +17,3 @@ terraform apply
 # Configure kube context
 aws eks update-kubeconfig --region eu-west-1 --name eks --profile terraform
 ```
-
-> Install `aws` CLI by following the instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and create an AWS account for `terraform`.

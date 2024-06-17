@@ -22,7 +22,7 @@ resource "aws_iam_role" "role" {
 }
 
 resource "aws_iam_policy" "policy" {
-  name = "${var.eks_name}-myapp-secrets"
+  name = "${var.eks_name}-${var.eks_namespace}-${var.eks_service_account}-sa-policy"
 
   policy = jsonencode({
     Version = "2012-10-17"

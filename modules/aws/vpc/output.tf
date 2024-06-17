@@ -19,5 +19,5 @@ output "private_subnets_cidr_blocks" {
 }
 
 output "nat_gateway_ipv4_address" {
-  value = aws_eip.nat_gateway[0].public_ip
+  value = aws_eip.nat.public_ip
 }

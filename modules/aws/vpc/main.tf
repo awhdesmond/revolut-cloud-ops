@@ -28,7 +28,7 @@ resource "aws_subnet" "public" {
   count = var.public_subnet_count
 
 	vpc_id = aws_vpc.main.id
-	cidr_block = cidrsubnet(var.cidr_block, var.public_subnet_additional_bits, count.index)
+	cidr_block = cidrsubnet(var.cidr_block, var.public_subnet_additional_bits, count.index + var.public_subnet_count)
 	availability_zone = data.aws_availability_zones.available.names[count.index]
 
 	# Required for EKS. Instances launched in the public subnet
@@ -60,7 +60,7 @@ resource "aws_subnet" "private" {
 resource "aws_eip" "nat" {
   domain = "vpc"
   tags = merge(var.default_tags, {
-    Name = "${var_vpc}-nat"
+    Name = "${var.vpc_name}-nat"
   })
 }
 
@@ -68,7 +68,7 @@ resource "aws_nat_gateway" "nat_gw" {
 	allocation_id = aws_eip.nat.id
 	subnet_id = aws_subnet.public[0].id
 	tags = merge(var.default_tags, {
-    Name = "${var_vpc}-nat"
+    Name = "${var.vpc_name}-nat"
   })
 
   # NAT gateway may require internet gateway to be
@@ -83,10 +83,10 @@ resource "aws_route_table" "public" {
 	vpc_id = aws_vpc.main.id
 	route {
 		cidr_block = "0.0.0.0/0"
-		gateway_id = aws_internet_gateway.main.id
+		gateway_id = aws_internet_gateway.igw.id
 	}
 	tags = merge(var.default_tags, {
-		Name = "${var_vpc}-private"
+		Name = "${var.vpc_name}-private"
 	})
 }
 
@@ -98,7 +98,7 @@ resource "aws_route_table" "private" {
 	}
 
   tags = merge(var.default_tags, {
-		Name = "${var_vpc}-public"
+		Name = "${var.vpc_name}-public"
 	})
 }
 

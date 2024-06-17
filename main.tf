@@ -1,3 +1,12 @@
+resource "aws_ecr_repository" "revolut_user_service" {
+  name                 = "revolut-user-service"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
 module "vpc" {
   source = "./modules/aws/vpc"
 
@@ -19,8 +28,9 @@ module "rds" {
   db_engine                             = "postgres"
   db_version                            = "16.2"
   db_family                             = "postgres16"
+  db_instance_class                     = "db.t3.medium"
   db_subnets_id                         = module.vpc.private_subnets
-  db_storage                            = 10
+  db_storage                            = 50
   db_security_group_ingress_cidr_blocks = module.vpc.private_subnets_cidr_blocks
 
   default_tags = { env = "prod" }
@@ -37,11 +47,4 @@ module "elasticache" {
   default_tags = { env = "prod" }
 }
 
-resource "aws_ecr_repository" "revolut_user_service" {
-  name                 = "revolut-user-service"
-  image_tag_mutability = "MUTABLE"
 
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-}

@@ -9,6 +9,17 @@ variable "db_name" {
   nullable    = false
   description = "Name of the DB"
 }
+variable "db_user" {
+  type        = string
+  default     = "postgres"
+  description = "DB User"
+}
+
+variable "db_password" {
+  type        = string
+  default     = "postgres"
+  description = "DB Password"
+}
 
 variable "db_engine" {
   type        = string
@@ -36,7 +47,7 @@ variable "db_instance_class" {
 
 variable "db_storage_type" {
   type        = string
-  default     = "gp3"
+  default     = "gp2"
   description = "DB storage type"
 }
 
@@ -47,7 +58,7 @@ variable "db_subnets_id" {
 }
 
 variable "db_storage" {
-  type = int
+  type        = number
   nullable    = false
   description = "size of the database"
 }

@@ -17,21 +17,27 @@ variable "cluster_version" {
   description = "DB Engine Version"
 }
 
-variable "num_cache_nodes" {
-  type        = int
+variable "num_node_groups" {
+  type        = number
   default     = 1
-  description = "number of cache nodes"
+  description = "number of node groups"
+}
+
+variable "replicas_per_node_group" {
+  type        = number
+  default     = 1
+  description = "number of cache nodes per group"
 }
 
 variable "cluster_parameter_group_name" {
   type        = string
-  default     = "default.redis7.0"
-  description = "parameter group name"
+  default     = "default.redis7.cluster.on"
+  description = "parameter group name, default has cluster mode on"
 }
 
 variable "cluster_instance_class" {
   type        = string
-  default     = "cache.m4.large"
+  default     = "cache.t3.small"
   description = "node type"
 }
 

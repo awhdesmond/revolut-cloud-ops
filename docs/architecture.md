@@ -92,18 +92,18 @@ Kubernetes `Deployment` of a simple "Hello World" application that manages users
 * Spread across AZs using `topologySpreadConstraints`
 * Interacts with RDS and Elasticache
 
-
-
 ## Reliability Considerations
 
-| Dimension              | Description                                                                           |
-| ---------------------- | ------------------------------------------------------------------------------------- |
-| Scalability (Compute)  | Easy to increase number of nodes in EKS Managed Node Groups, or add more node groups. |
-| Scalability (Database) | Deploy RDS Read Replicas to scale read queries.                                       |
-| Reliability (HA)       | Multi-AZ deployment for EKS, RDS, Elasticache  to fend against single AZ failures.    |
-| Performance            | Leverage on Elasticache to improve latency for read queries.                          |
-| Operations             | Structured logging to Cloudwatch logs.                                                |
-| Security               | Do not store secrets in repository. Leverage on AWS Secrets manager.                  |
+| Dimension                         | Description                                                                                                                                                      |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Scalability (Compute)             | Easy to increase number of nodes in EKS Managed Node Groups, or add more node groups.                                                                            |
+| Scalability (Database)            | Deploy RDS Read Replicas to scale read queries.                                                                                                                  |
+| Reliability (HA)                  | Multi-AZ deployment for EKS, RDS, Elasticache  to fend against single AZ failures. User Service API is deployed across AZs using `topologySpreadConstraints`.    |
+| Reliability (Business Continuity) | RDS automated backups.                                                                                                                                           |
+| Performance (latency)             | Leverage on Elasticache to improve latency for read queries, and reduce load on primary RDS instance.                                                            |
+| Operations                        | Structured logging to Cloudwatch logs. Applications metrics scrapped by Prometheus.                                                                              |
+| Security (Secrets & Encryption)   | Do not store secrets in repository and leverage on AWS Secrets manager to sync secrets into EKS cluster. Encryption enabled for RDS as we are storing user data. |
+| Security (IAM)                    | Use IRSA and dedicated IAM roles for different cluster workloads. (Principle of least privilege)                                                                 |
 
 
 ## Future Work
@@ -111,3 +111,4 @@ Kubernetes `Deployment` of a simple "Hello World" application that manages users
 1. Leverage on pgpool to load-balance queries between RDS primary and read replicas.
 2. Secure User Service API endpoint using authentication mechanism such as JWT and service accounts.
 3. Deploy metrics-server and use HPA/KEDA to dynamically autoscale user service deployment based on CPU usage.
+4. Create IPv6 EKS clusters to increase pod density per cluster.

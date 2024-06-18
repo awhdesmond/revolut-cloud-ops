@@ -48,6 +48,7 @@ resource "random_password" "master" {
 
 resource "aws_secretsmanager_secret" "password" {
   name = "rds-${var.db_name}-password"
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "password" {

@@ -111,8 +111,8 @@ Kubernetes `Deployment` of a simple "Hello World" application that manages users
 ## Future Work
 
 1. Leverage on pgpool to load-balance queries between RDS primary and read replicas.
-2. Secure User Service API endpoint using authentication mechanism such as JWT and service accounts.
-3. Deploy metrics-server and use HPA/KEDA to dynamically autoscale user service deployment based on CPU usage.
-4. Create IPv6 EKS clusters to increase pod density per cluster.
-5. Restrict EKS API Endpoint to only private endpoint.
-
+2. Deploy metrics-server and use HPA/KEDA to dynamically autoscale user service deployment based on CPU usage.
+3. Create IPv6 EKS clusters to increase pod density per cluster.
+4. Restrict EKS API Endpoint to only private endpoint.
+5. Secure User Service API endpoint using authentication mechanism such as JWT and service accounts.
+6. Deploy Prometheus to scrap application metrics and visualise in Grafana.

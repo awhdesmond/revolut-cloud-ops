@@ -58,7 +58,7 @@ make platform KUBE_CONTEXT=${EKS_KUBECTL_CONTEXT}
 ```
 
 > `aws-lbc` also requires the EKS cluster name. In this example, we are using `eks`.
-
+> The commands are designed to be idempotent. So they can be re-run if it fails the first time.
 
 ## 4. Deploy Revolut User Service
 
@@ -68,6 +68,8 @@ In `revolut-gitops-k8s`, run the following commands to deploy application compon
 ./scripts/update-aws-fields-user-service.sh
 make user-service KUBE_CONTEXT=${EKS_KUBECTL_CONTEXT}
 ```
+
+> The commands are designed to be idempotent. So they can be re-run if it fails the first time.
 
 ## 5. Perform Queries
 

@@ -46,6 +46,11 @@ An EKS Kubernetes cluster is deployed in the VPC to provide container orchestrat
 
 An ECR repository is created to store container images for the user service.
 
+## Revolut Service Account Role
+
+We refactor the logic to create IAM roles for EKS Kubernetes service accounts into a module `eks-sa-role`. This module can be used to grant EKS Kubernetes service accounts permissions
+to retrieve secrets from AWS Secret manager.
+
 # EKS Components
 
 ![EKS](./eks.png)
@@ -64,12 +69,6 @@ The LBC is supported by AWS. Some clusters may be using the legacy "in-tree" fun
 
 Ingress controller for Kubernetes using NGINX as a reverse proxy and load balancer.
 
-### ArgoCD
-
-Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes. Argo CD follows the **GitOps** pattern of using Git repositories as the source of truth for defining the desired application state.
-
-Argo CD automates the deployment of the desired application states in the specified target environments. Application deployments can track updates to branches, tags, or pinned to a specific version of manifests at a Git commit.
-
 ### Secrets Store CSI Provider
 
 Secrets Store CSI Driver for Kubernetes secrets - Integrates secrets stores with Kubernetes via a Container Storage Interface (CSI) volume.
@@ -84,3 +83,10 @@ Kubernetes `Deployment` of a simple "Hello World" application that manages users
 
 * Spread across AZs using `topologySpreadConstraints`
 * Interacts with RDS and Elasticache
+
+
+## Future Work
+
+1. Leverage on pgpool to load-balance queries between RDS primary and read replicas.
+2. Secure User Service API endpoint using authentication mechanism such as JWT and service accounts.
+3. Deploy metrics-server and use HPA/KEDA to dynamically autoscale user service deployment based on CPU usage.

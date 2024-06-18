@@ -37,6 +37,13 @@ resource "aws_iam_role_policy_attachment" "amazon_ec2_container_registry_read_on
   role = aws_iam_role.nodes_general.name
 }
 
+resource "aws_iam_role_policy_attachment" "cloudwatch_agent_server_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+
+  # the role the policy should be applied to.
+  role = aws_iam_role.nodes_general.name
+}
+
 
 data "aws_ssm_parameter" "eks_ami_release_version" {
   name = "/aws/service/eks/optimized-ami/${aws_eks_cluster.eks.version}/amazon-linux-2/recommended/release_version"
@@ -85,6 +92,7 @@ resource "aws_eks_node_group" "nodes_general" {
     aws_iam_role_policy_attachment.amazon_eks_worker_policy_general,
     aws_iam_role_policy_attachment.amazon_eks_cni_policy_general,
     aws_iam_role_policy_attachment.amazon_ec2_container_registry_read_only,
+    aws_iam_role_policy_attachment.cloudwatch_agent_server_policy,
   ]
 
   lifecycle {

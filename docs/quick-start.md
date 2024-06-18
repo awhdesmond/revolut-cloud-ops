@@ -1,8 +1,12 @@
 # Quick Start
 
-0. Install `aws` CLI by following the instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) and create an AWS account for `terraform` with `AdministratorAccess` permission.
+## 0. Pre-requisites
 
-1. Provision all the cloud resources
+1. Install `aws` CLI by following the instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+2. Create an AWS account for `terraform` with `AdministratorAccess` permission.
+
+## 1. Provision AWS Cloud resources
+
 ```bash
 aws configure --profile terraform
 
@@ -11,9 +15,10 @@ terraform apply
 
 # Configure kube context
 aws eks update-kubeconfig --region eu-west-1 --name eks --profile terraform
+export EKS_KUBECTL_CONTEXT=`kubectl config current-context`
 ```
 
-2. Store the values of the following terraform output:
+Store the values of the following terraform output:
    * `aws_lbc_role_arn`
    * `ecr_repo_url`
    * `elasticache_cluster_configuration_endpoint`
@@ -22,44 +27,57 @@ aws eks update-kubeconfig --region eu-west-1 --name eks --profile terraform
    * `rds_password_secret_name`
    * `revolut_user_service_role_arn`
 
+## 2. Build Revolut User Service
 
-3. Clone `revolut-user-service`, run the following commands to build and push docker image:
+Clone `revolut-user-service`, run the following commands to build and push docker image:
+
 ```bash
-export IMAGE_TAG=`git describe --dirty --always`
+export IMAGE_TAG="0.1.0"
 export CONTAINER_REGISTRY=<ecr_repo_url from terraform (without the repo)>
 export CONTAINER_REPOSITORY=revolut-user-service
+
 make docker
 make docker-push
 ```
 
-4. Clone [`revolut-gitops-k8s`](https://github.com/awhdesmond/revolut-gitops-k8s) repository.
+## 3. Deploy EKS Platform Components
 
-5. In `revolut-gitops-k8s`, run the following commands to deploy platform components:
+Clone [`revolut-gitops-k8s`](https://github.com/awhdesmond/revolut-gitops-k8s) repository.
+
+In `revolut-gitops-k8s`, run the following commands to deploy platform components:
+
 ```bash
 # Use the output from terraform: aws_lbc_role_arn
 export AWS_LBC_ROLE_ARN=<aws_lbc_role_arn from terraform output>
 
-sed -i '' \
-    -e "s|eks.amazonaws.com\/role-arn:.*|eks.amazonaws.com/role-arn: ${AWS_LBC_ROLE_ARN}|g" \
-    kustomize/platform/components/aws-lbc/base/templates/serviceaccount.yaml
+./scripts/update-aws-fields-platform.sh
 
-make platform KUBE_CONTEXT=<EKS_KUBECTL_CONTEXT> ENV=prod
+make platform KUBE_CONTEXT=${EKS_KUBECTL_CONTEXT}
 ```
 
 > `aws-lbc` also requires the EKS cluster name. In this example, we are using `eks`.
 
 
-6. In `revolut-gitops-k8s`, run the following commands to deploy application components:
+## 4. Deploy Revolut User Service
+
+In `revolut-gitops-k8s`, run the following commands to deploy application components:
+
 ```bash
-export USER_SERVICE_ROLE_ARN=arn:aws:iam::974860574511:role/eks-revolut-user-service-role
+export USER_SERVICE_ROLE_ARN=<revolut_user_service_role_arn from terraform >
+export RDS_HOST=<first rds_hostnames from terraform>
+export REDIS_URI=<elasticache_cluster_configuration_endpoint from terraform>
 
-pushd kustomize/apps/components/user-service/api/prod
-sed -i '' \
-    -e "s|eks.amazonaws.com\/role-arn:.*|eks.amazonaws.com/role-arn: ${USER_SERVICE_ROLE_ARN}|g" \
-    sa.yaml
+./scripts/update-aws-fields-user-service.sh
 
-kustomize edit set image revolut-user-service=${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}:${IMAGE_TAG}
-popd
+make user-service KUBE_CONTEXT=${EKS_KUBECTL_CONTEXT}
+```
 
-make user-service KUBE_CONTEXT=<EKS_KUBECTL_CONTEXT> ENV=<ENV>
+## 5. Perform Queries
+
+```bash
+export NGINX_NLB_HOSTNAME=`kubectl -n platform-ingress get svc ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'`
+
+curl -XPUT -d '{"dateOfBirth": "2021-10-01"}' "http://${NGINX_NLB_HOSTNAME}/hello/apple" -w '%{http_code}\n'
+
+curl -XGET "http://${NGINX_NLB_HOSTNAME}/hello/apple"
 ```

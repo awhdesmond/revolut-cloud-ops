@@ -57,7 +57,7 @@ to retrieve secrets from AWS Secret manager.
 
 ## Platform components
 
-Platform components provide shared cluster-level functionalities and capabilities to support services deployed by product developers.
+Platform components provide foundational cluster-level functionalities and capabilities to support services deployed by product developers.
 
 ### AWS-LBC
 
@@ -75,6 +75,14 @@ Secrets Store CSI Driver for Kubernetes secrets - Integrates secrets stores with
 
 The Secrets Store CSI Driver `secrets-store.csi.k8s.io` allows Kubernetes to mount multiple secrets, keys, and certs stored in enterprise-grade external secrets stores into their pods as a volume. Once the Volume is attached, the data in it is mounted into the container’s file system.
 
+### FluentBit
+
+Send logs from containers to Amazon CloudWatch Logs.
+
+### Prometheus
+
+Scrape metrics from application services and send them to AWS Managed Prometheus.
+
 ## Applications
 
 ### Revolut User Service
@@ -83,6 +91,19 @@ Kubernetes `Deployment` of a simple "Hello World" application that manages users
 
 * Spread across AZs using `topologySpreadConstraints`
 * Interacts with RDS and Elasticache
+
+
+
+## Reliability Considerations
+
+| Dimension              | Description                                                                           |
+| ---------------------- | ------------------------------------------------------------------------------------- |
+| Scalability (Compute)  | Easy to increase number of nodes in EKS Managed Node Groups, or add more node groups. |
+| Scalability (Database) | Deploy RDS Read Replicas to scale read queries.                                       |
+| Reliability (HA)       | Multi-AZ deployment for EKS, RDS, Elasticache  to fend against single AZ failures.    |
+| Performance            | Leverage on Elasticache to improve latency for read queries.                          |
+| Operations             | Structured logging to Cloudwatch logs.                                                |
+| Security               | Do not store secrets in repository. Leverage on AWS Secrets manager.                  |
 
 
 ## Future Work

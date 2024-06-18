@@ -51,3 +51,8 @@ output "revolut_user_service_role_arn" {
   value = module.revolut_user_service_role.role_arn
   description = "user service role arn"
 }
+
+output "prometheus_endpoint" {
+  value = module.prometheus.prometheus_endpoint
+  description = "prometheus endpoint"
+}

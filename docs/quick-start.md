@@ -77,7 +77,8 @@ make user-service KUBE_CONTEXT=${EKS_KUBECTL_CONTEXT}
 ```bash
 export NGINX_NLB_HOSTNAME=`kubectl -n platform-ingress get svc ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'`
 
-curl -XPUT -d '{"dateOfBirth": "2021-10-01"}' "http://${NGINX_NLB_HOSTNAME}/hello/apple" -w '%{http_code}\n'
-
-curl -XGET "http://${NGINX_NLB_HOSTNAME}/hello/apple"
+for i in {1..1000}; do
+   curl -XPUT -d '{"dateOfBirth": "2021-10-01"}' "http://${NGINX_NLB_HOSTNAME}/hello/apple" -w '%{http_code}\n'
+   curl -XGET "http://${NGINX_NLB_HOSTNAME}/hello/apple"
+done
 ```

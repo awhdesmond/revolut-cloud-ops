@@ -67,3 +67,14 @@ module "revolut_user_service_role" {
   eks_oidc_provider_url = module.eks.eks_oidc_provider_url
   secrets_arns = [ module.rds.rds_password_secret_arn, module.elasticache.cluster_password_secret_arn ]
 }
+
+
+module "prometheus" {
+  source = "./modules/aws/prometheus"
+  name = "prometheus"
+  eks_name = "eks"
+  eks_namespace = "platform-monitoring"
+  eks_service_account = "prometheus"
+  eks_oidc_provider_arn = module.eks.eks_oidc_provider_arn
+  eks_oidc_provider_url = module.eks.eks_oidc_provider_url
+}

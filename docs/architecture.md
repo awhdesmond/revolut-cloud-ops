@@ -12,11 +12,12 @@ This Terraform repository provision resources on AWS to support the deployment o
 | Scalability (Database)            | Deploy RDS Read Replicas to scale read queries.                                                                                                                       |
 | Reliability (HA)                  | Multi-AZ deployment for EKS, RDS, Elasticache to fend against single AZ failures. Pods of User Service API are deployed across AZs using `topologySpreadConstraints`. |
 | Reliability (Business Continuity) | RDS automated backups.                                                                                                                                                |
-| Performance (latency)             | Leverage on Elasticache to improve latency for read queries, and reduce load on primary RDS instance.                                                                 |
+| Performance (Latency)             | Leverage on Elasticache to improve latency for read queries, and reduce load on primary RDS instance.                                                                 |
 | Observability                     | Structured logging to Cloudwatch logs. Expose Applications metrics in Prometheus format.                                                                              |
 | Security (Secrets & Encryption)   | Do not store secrets in repository and leverage on AWS Secrets manager to sync secrets into EKS cluster. Encryption enabled for RDS as we are storing user data.      |
 | Security (IAM)                    | Use IRSA and dedicated IAM roles for different cluster workloads. (Principle of least privilege)                                                                      |
-
+| Security (Network)                | Security Groups used to control network traffic to/from EKS pods and databases                                                                                        |
+| Security (Pod Runtime)            | Security Context to prevent privilege escalation , set runAsUser and runAsGroup.                                                                                      |
 
 ## VPC
 

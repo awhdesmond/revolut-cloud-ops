@@ -56,3 +56,8 @@ output "prometheus_endpoint" {
   value = module.prometheus.prometheus_endpoint
   description = "prometheus endpoint"
 }
+
+output "prometheus_role_arn" {
+  value = module.prometheus.prometheus_role_arn
+  description = "prometheus role arn"
+}

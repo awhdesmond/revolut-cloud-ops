@@ -17,3 +17,6 @@ terraform apply
 # Configure kube context
 aws eks update-kubeconfig --region eu-west-1 --name eks --profile terraform
 ```
+
+See [quick start](./docs/quick-start.md) for quick start instructions.
+

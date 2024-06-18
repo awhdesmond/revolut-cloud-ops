@@ -26,6 +26,9 @@ Store the values of the following terraform output:
    * `rds_password_secret_arn`
    * `rds_password_secret_name`
    * `revolut_user_service_role_arn`
+   * `prometheus_endpoint`
+   * `prometheus_role_arn`
+
 
 ## 2. Build Revolut User Service
 
@@ -49,6 +52,8 @@ In `revolut-gitops-k8s`, run the following commands to deploy platform component
 ```bash
 # Use the output from terraform: aws_lbc_role_arn
 export AWS_LBC_ROLE_ARN=<aws_lbc_role_arn from terraform output>
+export PROMETHEUS_ROLE_ARN=<prometheus_role_arn from terraform output>
+export PROMETHEUS_ENDPOINT=<prometheus_endpoint from terraform output>
 
 ./scripts/update-aws-fields-platform.sh
 

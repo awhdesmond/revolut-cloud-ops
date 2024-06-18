@@ -26,16 +26,12 @@ Store the values of the following terraform output:
    * `rds_password_secret_arn`
    * `rds_password_secret_name`
    * `revolut_user_service_role_arn`
-   * `prometheus_endpoint`
-   * `prometheus_role_arn`
 
 ```bash
 export IMAGE_TAG="0.1.0"
 export CONTAINER_REPOSITORY=revolut-user-service
 export CONTAINER_REGISTRY=<ecr_repo_url from terraform (without the repo)>
 export AWS_LBC_ROLE_ARN=<aws_lbc_role_arn from terraform output>
-export PROMETHEUS_ROLE_ARN=<prometheus_role_arn from terraform output>
-export PROMETHEUS_ENDPOINT=<prometheus_endpoint from terraform output>
 export USER_SERVICE_ROLE_ARN=<revolut_user_service_role_arn from terraform>
 export RDS_HOST=<first rds_hostnames from terraform>
 export REDIS_URI=<elasticache_cluster_configuration_endpoint from terraform>

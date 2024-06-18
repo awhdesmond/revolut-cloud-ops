@@ -4,6 +4,20 @@
 
 This Terraform repository provision resources on AWS to support the deployment of [Revolut User Service](https://github.com/awhdesmond/revolut-user-service).
 
+## Reliability Considerations
+
+| Dimension                         | Description                                                                                                                                                           |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Scalability (Compute)             | Easy to increase number of nodes in EKS Managed Node Groups, or add more node groups.                                                                                 |
+| Scalability (Database)            | Deploy RDS Read Replicas to scale read queries.                                                                                                                       |
+| Reliability (HA)                  | Multi-AZ deployment for EKS, RDS, Elasticache to fend against single AZ failures. Pods of User Service API are deployed across AZs using `topologySpreadConstraints`. |
+| Reliability (Business Continuity) | RDS automated backups.                                                                                                                                                |
+| Performance (latency)             | Leverage on Elasticache to improve latency for read queries, and reduce load on primary RDS instance.                                                                 |
+| Observability                     | Structured logging to Cloudwatch logs. Expose Applications metrics in Prometheus format.                                                                              |
+| Security (Secrets & Encryption)   | Do not store secrets in repository and leverage on AWS Secrets manager to sync secrets into EKS cluster. Encryption enabled for RDS as we are storing user data.      |
+| Security (IAM)                    | Use IRSA and dedicated IAM roles for different cluster workloads. (Principle of least privilege)                                                                      |
+
+
 ## VPC
 
 One VPC is created in `eu-west-1` with 2 public and 2 private subnets.
@@ -46,6 +60,11 @@ An EKS Kubernetes cluster is deployed in the VPC to provide container orchestrat
 
 An ECR repository is created to store container images for the user service.
 
+## CloudWatch Logs
+
+For logs.
+
+
 ## Revolut Service Account Role
 
 We refactor the logic to create IAM roles for EKS Kubernetes service accounts into a module `eks-sa-role`. This module can be used to grant EKS Kubernetes service accounts permissions
@@ -79,10 +98,6 @@ The Secrets Store CSI Driver `secrets-store.csi.k8s.io` allows Kubernetes to mou
 
 Send logs from containers to Amazon CloudWatch Logs.
 
-### Prometheus
-
-Scrape metrics from application services and send them to AWS Managed Prometheus.
-
 ## Applications
 
 ### Revolut User Service
@@ -92,19 +107,6 @@ Kubernetes `Deployment` of a simple "Hello World" application that manages users
 * Spread across AZs using `topologySpreadConstraints`
 * Interacts with RDS and Elasticache
 
-## Reliability Considerations
-
-| Dimension                         | Description                                                                                                                                                      |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Scalability (Compute)             | Easy to increase number of nodes in EKS Managed Node Groups, or add more node groups.                                                                            |
-| Scalability (Database)            | Deploy RDS Read Replicas to scale read queries.                                                                                                                  |
-| Reliability (HA)                  | Multi-AZ deployment for EKS, RDS, Elasticache  to fend against single AZ failures. User Service API is deployed across AZs using `topologySpreadConstraints`.    |
-| Reliability (Business Continuity) | RDS automated backups.                                                                                                                                           |
-| Performance (latency)             | Leverage on Elasticache to improve latency for read queries, and reduce load on primary RDS instance.                                                            |
-| Operations                        | Structured logging to Cloudwatch logs. Applications metrics scrapped by Prometheus.                                                                              |
-| Security (Secrets & Encryption)   | Do not store secrets in repository and leverage on AWS Secrets manager to sync secrets into EKS cluster. Encryption enabled for RDS as we are storing user data. |
-| Security (IAM)                    | Use IRSA and dedicated IAM roles for different cluster workloads. (Principle of least privilege)                                                                 |
-
 
 ## Future Work
 
@@ -112,3 +114,5 @@ Kubernetes `Deployment` of a simple "Hello World" application that manages users
 2. Secure User Service API endpoint using authentication mechanism such as JWT and service accounts.
 3. Deploy metrics-server and use HPA/KEDA to dynamically autoscale user service deployment based on CPU usage.
 4. Create IPv6 EKS clusters to increase pod density per cluster.
+5. Restrict EKS API Endpoint to only private endpoint.
+
